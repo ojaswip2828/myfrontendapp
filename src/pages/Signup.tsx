@@ -7,14 +7,16 @@ import { Label } from "@/components/ui/label";
 import { Separator } from "@/components/ui/separator";
 import { Users, Zap, Target, Shield } from "lucide-react";
 
-const Login = () => {
+const Signup = () => {
+  const [firstName, setFirstName] = useState("");
+  const [lastName, setLastName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const navigate = useNavigate();
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    // Simulate login/signup
+    // Simulate signup
     navigate("/dashboard");
   };
 
@@ -47,11 +49,11 @@ const Login = () => {
       <div className="hidden lg:flex lg:w-1/2 p-12 flex-col justify-center bg-muted/30">
         <div className="max-w-lg">
           <h1 className="text-4xl font-bold mb-4 bg-gradient-to-r from-primary to-accent bg-clip-text text-transparent">
-            Welcome back to SynergySphere
+            Join SynergySphere
           </h1>
           <p className="text-lg text-muted-foreground mb-8">
-            Sign in to continue your team collaboration journey. 
-            Access your projects, chat with teammates, and track progress.
+            Start collaborating with your team today. Experience the power of 
+            unified team communication and project management.
           </p>
           
           <div className="grid gap-6">
@@ -73,20 +75,43 @@ const Login = () => {
         </div>
       </div>
 
-      {/* Right side - Login Form */}
+      {/* Right side - Signup Form */}
       <div className="flex-1 flex items-center justify-center p-8">
         <div className="w-full max-w-md space-y-6">
           <Card>
             <CardHeader className="space-y-1">
               <CardTitle className="text-2xl font-bold text-center">
-                Welcome back
+                Create your account
               </CardTitle>
               <CardDescription className="text-center">
-                Sign in to your SynergySphere account
+                Get started with SynergySphere today
               </CardDescription>
             </CardHeader>
             <CardContent className="space-y-4">
               <form onSubmit={handleSubmit} className="space-y-4">
+                <div className="grid grid-cols-2 gap-4">
+                  <div className="space-y-2">
+                    <Label htmlFor="firstName">First Name</Label>
+                    <Input
+                      id="firstName"
+                      placeholder="John"
+                      value={firstName}
+                      onChange={(e) => setFirstName(e.target.value)}
+                      required
+                    />
+                  </div>
+                  <div className="space-y-2">
+                    <Label htmlFor="lastName">Last Name</Label>
+                    <Input
+                      id="lastName"
+                      placeholder="Doe"
+                      value={lastName}
+                      onChange={(e) => setLastName(e.target.value)}
+                      required
+                    />
+                  </div>
+                </div>
+                
                 <div className="space-y-2">
                   <Label htmlFor="email">Email address</Label>
                   <Input
@@ -100,19 +125,11 @@ const Login = () => {
                 </div>
                 
                 <div className="space-y-2">
-                  <div className="flex items-center justify-between">
-                    <Label htmlFor="password">Password</Label>
-                    <button
-                      type="button"
-                      className="text-xs text-primary hover:underline"
-                    >
-                      Forgot Password?
-                    </button>
-                  </div>
+                  <Label htmlFor="password">Password</Label>
                   <Input
                     id="password"
                     type="password"
-                    placeholder="Enter your password"
+                    placeholder="Create a strong password"
                     value={password}
                     onChange={(e) => setPassword(e.target.value)}
                     required
@@ -120,7 +137,7 @@ const Login = () => {
                 </div>
 
                 <Button type="submit" className="w-full">
-                  Sign In
+                  Create Account
                 </Button>
               </form>
 
@@ -140,27 +157,19 @@ const Login = () => {
                   <path fill="currentColor" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z"/>
                   <path fill="currentColor" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"/>
                 </svg>
-                Login with Google
-              </Button>
-
-              <Button 
-                variant="outline" 
-                className="w-full"
-                onClick={() => navigate("/dashboard")}
-              >
-                Continue as Demo User
+                Signup with Google
               </Button>
 
               <div className="text-center text-sm">
                 <span className="text-muted-foreground">
-                  Don't have an account?
+                  Already have an account?
                 </span>
                 <button
                   type="button"
                   className="ml-1 text-primary hover:underline"
-                  onClick={() => navigate("/signup")}
+                  onClick={() => navigate("/login")}
                 >
-                  Sign up
+                  Sign in
                 </button>
               </div>
             </CardContent>
@@ -176,4 +185,4 @@ const Login = () => {
   );
 };
 
-export default Login;
+export default Signup;

@@ -1,84 +1,81 @@
 import Navigation from "@/components/Navigation";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Progress } from "@/components/ui/progress";
+import { Button } from "@/components/ui/button";
+import { Textarea } from "@/components/ui/textarea";
+import { Calendar } from "@/components/ui/calendar";
+import { Input } from "@/components/ui/input";
 import { 
-  Plus, 
-  MessageCircle, 
-  Calendar, 
-  Clock, 
-  TrendingUp, 
-  CheckCircle2,
-  AlertCircle,
-  Users
+  CalendarDays, 
+  MessageSquare, 
+  Users, 
+  BarChart, 
+  CheckCircle2, 
+  Clock,
+  TrendingUp,
+  Activity,
+  Plus,
+  StickyNote,
+  Calendar as CalendarIcon
 } from "lucide-react";
+import { useState } from "react";
 
 const Dashboard = () => {
-  const recentActivity = [
-    {
-      id: 1,
-      user: "Sarah Chen",
-      action: "completed task",
-      target: "Design System Update",
-      time: "2 minutes ago",
-      avatar: "SC"
-    },
-    {
-      id: 2,
-      user: "Mike Johnson",
-      action: "commented on",
-      target: "Q4 Planning",
-      time: "15 minutes ago", 
-      avatar: "MJ"
-    },
-    {
-      id: 3,
-      user: "Emma Davis",
-      action: "created project",
-      target: "Mobile App Redesign",
-      time: "1 hour ago",
-      avatar: "ED"
-    }
-  ];
+  const [selectedDate, setSelectedDate] = useState<Date | undefined>(new Date());
+  const [notes, setNotes] = useState("Meeting notes for tomorrow's presentation...");
+  const [newTask, setNewTask] = useState("");
+  const [tasks, setTasks] = useState([
+    { id: 1, title: "Review project proposals", status: "in-progress", priority: "high", dueDate: "Today" },
+    { id: 2, title: "Update team documentation", status: "completed", priority: "medium", dueDate: "Yesterday" },
+    { id: 3, title: "Prepare quarterly presentation", status: "pending", priority: "high", dueDate: "Tomorrow" },
+    { id: 4, title: "Code review for mobile app", status: "in-progress", priority: "low", dueDate: "This week" },
+  ]);
 
-  const quickStats = [
-    {
-      title: "Active Projects",
-      value: "12",
-      change: "+2 this week",
-      icon: TrendingUp,
-      color: "text-success"
-    },
-    {
-      title: "Completed Tasks",
-      value: "156",
-      change: "+23 today",
-      icon: CheckCircle2,
-      color: "text-primary"
-    },
-    {
-      title: "Team Members",
-      value: "8",
-      change: "2 online now",
-      icon: Users,
-      color: "text-accent"
-    },
-    {
-      title: "Pending Reviews",
-      value: "4",
-      change: "2 urgent",
-      icon: AlertCircle,
-      color: "text-warning"
+  const addTask = () => {
+    if (newTask.trim()) {
+      setTasks([...tasks, {
+        id: tasks.length + 1,
+        title: newTask,
+        status: "pending",
+        priority: "medium",
+        dueDate: "Today"
+      }]);
+      setNewTask("");
     }
-  ];
+  };
 
-  const upcomingTasks = [
-    { id: 1, title: "Review design mockups", due: "Today 3:00 PM", priority: "high" },
-    { id: 2, title: "Team standup meeting", due: "Tomorrow 9:00 AM", priority: "medium" },
-    { id: 3, title: "Client presentation prep", due: "Friday 2:00 PM", priority: "high" },
-    { id: 4, title: "Code review", due: "Next week", priority: "low" }
+  const toggleTask = (id: number) => {
+    setTasks(tasks.map(task => 
+      task.id === id 
+        ? { ...task, status: task.status === "completed" ? "pending" : "completed" }
+        : task
+    ));
+  };
+
+  const getStatusColor = (status: string) => {
+    switch(status) {
+      case "completed": return "bg-green-500";
+      case "in-progress": return "bg-blue-500";
+      case "pending": return "bg-gray-400";
+      default: return "bg-gray-400";
+    }
+  };
+
+  const getPriorityColor = (priority: string) => {
+    switch(priority) {
+      case "high": return "destructive";
+      case "medium": return "secondary";
+      case "low": return "outline";
+      default: return "outline";
+    }
+  };
+
+  const quickActions = [
+    { title: "New Chat", icon: MessageSquare, color: "text-primary" },
+    { title: "Team View", icon: Users, color: "text-accent" },
+    { title: "Analytics", icon: BarChart, color: "text-success" },
+    { title: "Calendar", icon: CalendarDays, color: "text-warning" }
   ];
 
   return (
@@ -92,140 +89,181 @@ const Dashboard = () => {
             <div>
               <h1 className="text-3xl font-bold mb-2">Good morning, John! 👋</h1>
               <p className="text-muted-foreground">
-                Here's what's happening with your team today.
+                Here's your personal workspace. Manage tasks, schedule, and jot down notes.
               </p>
             </div>
             <div className="flex gap-3">
               <Button variant="outline" size="sm">
-                <Calendar className="w-4 h-4 mr-2" />
-                Schedule
+                <Activity className="w-4 h-4 mr-2" />
+                Activity
               </Button>
-              <Button className="btn-primary">
+              <Button>
                 <Plus className="w-4 h-4 mr-2" />
-                New Project
+                Quick Add
               </Button>
             </div>
           </div>
 
-          {/* Quick Stats */}
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
-            {quickStats.map((stat, index) => {
-              const Icon = stat.icon;
-              return (
-                <Card key={index} className="card-interactive">
-                  <CardContent className="p-6">
-                    <div className="flex items-center justify-between">
-                      <div>
-                        <p className="text-sm text-muted-foreground mb-1">{stat.title}</p>
-                        <p className="text-2xl font-bold mb-1">{stat.value}</p>
-                        <p className={`text-xs ${stat.color}`}>{stat.change}</p>
-                      </div>
-                      <div className="w-12 h-12 bg-muted rounded-full flex items-center justify-center">
-                        <Icon className={`w-6 h-6 ${stat.color}`} />
-                      </div>
-                    </div>
-                  </CardContent>
-                </Card>
-              );
-            })}
+          {/* Quick Actions */}
+          <div className="mb-8">
+            <Card>
+              <CardHeader>
+                <CardTitle className="flex items-center gap-2">
+                  <Activity className="w-5 h-5" />
+                  Quick Actions
+                </CardTitle>
+                <CardDescription>
+                  Jump into your most common tasks
+                </CardDescription>
+              </CardHeader>
+              <CardContent>
+                <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+                  {quickActions.map((action) => {
+                    const Icon = action.icon;
+                    return (
+                      <Button
+                        key={action.title}
+                        variant="outline"
+                        className="h-20 flex-col gap-2 hover:bg-primary hover:text-primary-foreground transition-colors"
+                      >
+                        <Icon className="w-6 h-6" />
+                        <span className="text-xs">{action.title}</span>
+                      </Button>
+                    );
+                  })}
+                </div>
+              </CardContent>
+            </Card>
           </div>
 
           <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-            {/* Recent Activity */}
-            <Card className="lg:col-span-2">
+            {/* My Tasks */}
+            <div className="lg:col-span-2">
+              <Card>
+                <CardHeader>
+                  <CardTitle className="flex items-center gap-2">
+                    <CheckCircle2 className="w-5 h-5" />
+                    My Tasks
+                  </CardTitle>
+                  <CardDescription>
+                    Your current and upcoming tasks
+                  </CardDescription>
+                </CardHeader>
+                <CardContent className="space-y-4">
+                  <div className="flex gap-2">
+                    <Input
+                      placeholder="Add a new task..."
+                      value={newTask}
+                      onChange={(e) => setNewTask(e.target.value)}
+                      onKeyPress={(e) => e.key === 'Enter' && addTask()}
+                    />
+                    <Button onClick={addTask} size="sm">
+                      <Plus className="w-4 h-4" />
+                    </Button>
+                  </div>
+                  <div className="space-y-3 max-h-64 overflow-y-auto">
+                    {tasks.map((task) => (
+                      <div
+                        key={task.id}
+                        className="flex items-center gap-3 p-3 border rounded-lg hover:bg-muted/50 transition-colors"
+                      >
+                        <button
+                          onClick={() => toggleTask(task.id)}
+                          className={`w-4 h-4 rounded-full border-2 flex-shrink-0 ${getStatusColor(task.status)}`}
+                        >
+                          {task.status === "completed" && (
+                            <CheckCircle2 className="w-3 h-3 text-white" />
+                          )}
+                        </button>
+                        <div className="flex-1 min-w-0">
+                          <p className={`text-sm ${task.status === "completed" ? "line-through text-muted-foreground" : ""}`}>
+                            {task.title}
+                          </p>
+                          <p className="text-xs text-muted-foreground">{task.dueDate}</p>
+                        </div>
+                        <Badge variant={getPriorityColor(task.priority)} className="text-xs">
+                          {task.priority}
+                        </Badge>
+                      </div>
+                    ))}
+                  </div>
+                </CardContent>
+              </Card>
+            </div>
+
+            {/* Schedule */}
+            <Card>
               <CardHeader>
                 <CardTitle className="flex items-center gap-2">
-                  <Clock className="w-5 h-5" />
-                  Recent Activity
+                  <CalendarIcon className="w-5 h-5" />
+                  Schedule
                 </CardTitle>
                 <CardDescription>
-                  Latest updates from your team members
+                  Plan your deadlines and meetings
                 </CardDescription>
               </CardHeader>
-              <CardContent className="space-y-4">
-                {recentActivity.map((activity) => (
-                  <div key={activity.id} className="flex items-start gap-4 p-4 rounded-lg bg-muted/50">
-                    <Avatar className="w-8 h-8">
-                      <AvatarImage src="" />
-                      <AvatarFallback className="text-xs bg-primary text-primary-foreground">
-                        {activity.avatar}
-                      </AvatarFallback>
-                    </Avatar>
-                    <div className="flex-1 min-w-0">
-                      <p className="text-sm">
-                        <span className="font-medium">{activity.user}</span>{" "}
-                        <span className="text-muted-foreground">{activity.action}</span>{" "}
-                        <span className="font-medium">{activity.target}</span>
-                      </p>
-                      <p className="text-xs text-muted-foreground mt-1">{activity.time}</p>
-                    </div>
-                  </div>
-                ))}
-                
-                <Button variant="ghost" className="w-full">
-                  View all activity
+              <CardContent>
+                <Calendar
+                  mode="single"
+                  selected={selectedDate}
+                  onSelect={setSelectedDate}
+                  className="rounded-md border"
+                />
+              </CardContent>
+            </Card>
+
+            {/* Notes */}
+            <Card>
+              <CardHeader>
+                <CardTitle className="flex items-center gap-2">
+                  <StickyNote className="w-5 h-5" />
+                  Quick Notes
+                </CardTitle>
+                <CardDescription>
+                  Jot down ideas and reminders
+                </CardDescription>
+              </CardHeader>
+              <CardContent>
+                <Textarea
+                  placeholder="Start writing your notes..."
+                  value={notes}
+                  onChange={(e) => setNotes(e.target.value)}
+                  className="min-h-32 resize-none"
+                />
+                <Button className="mt-3" size="sm">
+                  Save Notes
                 </Button>
               </CardContent>
             </Card>
 
-            {/* Upcoming Tasks */}
+            {/* Progress Overview */}
             <Card>
               <CardHeader>
-                <CardTitle>Upcoming Tasks</CardTitle>
-                <CardDescription>Your schedule for today and tomorrow</CardDescription>
+                <CardTitle>Today's Progress</CardTitle>
+                <CardDescription>Your productivity summary</CardDescription>
               </CardHeader>
               <CardContent className="space-y-4">
-                {upcomingTasks.map((task) => (
-                  <div key={task.id} className="flex items-start gap-3 p-3 rounded-lg hover:bg-muted/50 cursor-pointer">
-                    <div className="w-2 h-2 rounded-full bg-primary mt-2 flex-shrink-0"></div>
-                    <div className="flex-1 min-w-0">
-                      <p className="text-sm font-medium truncate">{task.title}</p>
-                      <p className="text-xs text-muted-foreground">{task.due}</p>
-                      <Badge 
-                        variant={task.priority === "high" ? "destructive" : 
-                                task.priority === "medium" ? "default" : "secondary"}
-                        className="mt-1"
-                      >
-                        {task.priority}
-                      </Badge>
-                    </div>
+                <div className="space-y-2">
+                  <div className="flex justify-between text-sm">
+                    <span>Tasks Completed</span>
+                    <span>3/8</span>
                   </div>
-                ))}
+                  <Progress value={37.5} className="h-2" />
+                </div>
+                
+                <div className="grid grid-cols-2 gap-4 pt-4">
+                  <div className="text-center">
+                    <div className="text-2xl font-bold text-success">3</div>
+                    <div className="text-xs text-muted-foreground">Completed</div>
+                  </div>
+                  <div className="text-center">
+                    <div className="text-2xl font-bold text-primary">2</div>
+                    <div className="text-xs text-muted-foreground">In Progress</div>
+                  </div>
+                </div>
               </CardContent>
             </Card>
           </div>
-
-          {/* Project Progress */}
-          <Card className="mt-6">
-            <CardHeader>
-              <CardTitle>Active Projects Progress</CardTitle>
-              <CardDescription>Track completion status of your current projects</CardDescription>
-            </CardHeader>
-            <CardContent>
-              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                {[
-                  { name: "Website Redesign", progress: 85, team: 4, deadline: "2 days left" },
-                  { name: "Mobile App", progress: 60, team: 6, deadline: "1 week left" },
-                  { name: "Brand Guidelines", progress: 40, team: 2, deadline: "3 weeks left" }
-                ].map((project, index) => (
-                  <div key={index} className="space-y-3">
-                    <div className="flex justify-between items-center">
-                      <h4 className="font-medium">{project.name}</h4>
-                      <span className="text-sm text-muted-foreground">{project.progress}%</span>
-                    </div>
-                    <Progress value={project.progress} className="h-2" />
-                    <div className="flex justify-between items-center text-sm">
-                      <span className="text-muted-foreground flex items-center gap-1">
-                        <Users className="w-3 h-3" />
-                        {project.team} members
-                      </span>
-                      <span className="text-muted-foreground">{project.deadline}</span>
-                    </div>
-                  </div>
-                ))}
-              </div>
-            </CardContent>
-          </Card>
         </div>
       </div>
     </div>

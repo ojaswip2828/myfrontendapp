@@ -6,14 +6,19 @@ import {
   Users, 
   BarChart3, 
   LogOut,
-  Settings 
+  Settings,
+  Sun,
+  Moon
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { useTheme } from "@/components/ThemeProvider";
+import { NotificationDropdown } from "@/components/NotificationDropdown";
 
 const Navigation = () => {
   const location = useLocation();
   const navigate = useNavigate();
+  const { theme, setTheme } = useTheme();
 
   const navigationItems = [
     { path: "/dashboard", label: "Dashboard", icon: Home },
@@ -27,14 +32,31 @@ const Navigation = () => {
     navigate("/login");
   };
 
+  const toggleTheme = () => {
+    setTheme(theme === "dark" ? "light" : "dark");
+  };
+
   return (
     <nav className="w-64 bg-card border-r border-border h-screen flex flex-col">
       {/* Logo */}
       <div className="p-6 border-b border-border">
-        <h1 className="text-xl font-bold gradient-primary bg-clip-text text-transparent">
+        <h1 className="text-xl font-bold bg-gradient-to-r from-primary to-accent bg-clip-text text-transparent">
           SynergySphere
         </h1>
         <p className="text-sm text-muted-foreground mt-1">Team Collaboration Hub</p>
+      </div>
+
+      {/* Top Controls */}
+      <div className="px-4 py-3 border-b border-border flex items-center justify-between">
+        <NotificationDropdown />
+        <Button
+          variant="ghost"
+          size="sm"
+          onClick={toggleTheme}
+          className="h-8 w-8 p-0"
+        >
+          {theme === "dark" ? <Sun className="h-4 w-4" /> : <Moon className="h-4 w-4" />}
+        </Button>
       </div>
 
       {/* Navigation Items */}
